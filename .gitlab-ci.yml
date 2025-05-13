@@ -1,0 +1,13 @@
+stages:
+  - test
+
+test:
+  stage: test
+  except:
+    - staging
+    - master
+  image: node:20
+  before_script:
+    - npm install --legacy-peer-deps
+  script:
+    - npm run test
