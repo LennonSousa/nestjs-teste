@@ -1,12 +1,25 @@
 import { Transaction } from '@domain/entities/Transaction';
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
+  ApiUnprocessableEntityResponse,
+  refs,
 } from '@nestjs/swagger';
 import { CreateTransactionBodyDTO } from '@shared/dtos/CreateTransactionDTO';
 import { GetStatisticsResponseDTO } from '@shared/dtos/GetStatisticsDTO';
+import { FutureTimestampError } from '@shared/errors/FutureTimestampError';
+import { NegativeAmountError } from '@shared/errors/NegativeAmountError';
 import { CreateTransactionUseCase } from '@useCases/CreateTransactionUseCase';
 import { DeleteAllTransactionsUseCase } from '@useCases/DeleteAllTransactionsUseCase';
 import { GetStatisticsUseCase } from '@useCases/GetStatisticsUseCase';
@@ -24,6 +37,20 @@ export class TransactionController {
     description: 'Create transaction',
   })
   @ApiCreatedResponse({ type: Transaction })
+  @ApiExtraModels(
+    NegativeAmountError,
+    FutureTimestampError,
+    BadRequestException,
+  )
+  @ApiUnprocessableEntityResponse({
+    schema: {
+      anyOf: refs(NegativeAmountError, FutureTimestampError),
+    },
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestException,
+    example: new BadRequestException(),
+  })
   async createTransaction(
     @Body() { amount, timestamp }: CreateTransactionBodyDTO,
   ): Promise<Transaction> {
