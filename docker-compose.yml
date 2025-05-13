@@ -1,0 +1,11 @@
+services:
+  app:
+    image: node:lts-alpine
+    working_dir: /app
+    command: yarn start:dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
