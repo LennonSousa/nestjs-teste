@@ -8,6 +8,7 @@ import { TransactionController } from '@controllers/http/TransactionController';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { TransactionGateway } from '@controllers/event/TransactionGateway';
+import { HealthCheckController } from '@controllers/http/HealthCheckController';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { TransactionGateway } from '@controllers/event/TransactionGateway';
       ],
     }),
   ],
-  controllers: [TransactionController],
+  controllers: [HealthCheckController, TransactionController],
   providers: [
     {
       provide: TransactionRepository,
